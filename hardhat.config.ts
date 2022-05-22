@@ -7,12 +7,17 @@ import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
 import "./tasks/deployers";
+import "./tasks/interactors";
 
 import { resolve } from "path";
 
 dotenv.config({ path: resolve(__dirname, "./.env") });
 
-const accounts = [process.env.DEPLOYER_PRIVATE_KEY as string];
+const accounts = [
+  process.env.DEPLOYER_PRIVATE_KEY as string,
+  process.env.A_PRIVATE_KEY as string,
+  process.env.B_PRIVATE_KEY as string,
+];
 
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more

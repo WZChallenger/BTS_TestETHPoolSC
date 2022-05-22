@@ -43,12 +43,15 @@ export declare namespace BTSETHPool {
 
 export interface BTSETHPoolInterface extends utils.Interface {
   functions: {
+    "ADMIN_ROLE()": FunctionFragment;
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+    "TEAM_ROLE()": FunctionFragment;
     "addTeamMember(address)": FunctionFragment;
     "claimRewards()": FunctionFragment;
     "deposit()": FunctionFragment;
     "depositRewards()": FunctionFragment;
     "getBalance()": FunctionFragment;
+    "getRewards(address)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getUserAddrs()": FunctionFragment;
     "getUserCount()": FunctionFragment;
@@ -65,12 +68,15 @@ export interface BTSETHPoolInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "ADMIN_ROLE"
       | "DEFAULT_ADMIN_ROLE"
+      | "TEAM_ROLE"
       | "addTeamMember"
       | "claimRewards"
       | "deposit"
       | "depositRewards"
       | "getBalance"
+      | "getRewards"
       | "getRoleAdmin"
       | "getUserAddrs"
       | "getUserCount"
@@ -86,9 +92,14 @@ export interface BTSETHPoolInterface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(
+    functionFragment: "ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "DEFAULT_ADMIN_ROLE",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "TEAM_ROLE", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "addTeamMember",
     values: [string]
@@ -106,6 +117,7 @@ export interface BTSETHPoolInterface extends utils.Interface {
     functionFragment: "getBalance",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "getRewards", values: [string]): string;
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
     values: [BytesLike]
@@ -152,10 +164,12 @@ export interface BTSETHPoolInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "userInfo", values: [string]): string;
 
+  decodeFunctionResult(functionFragment: "ADMIN_ROLE", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "DEFAULT_ADMIN_ROLE",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "TEAM_ROLE", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "addTeamMember",
     data: BytesLike
@@ -170,6 +184,7 @@ export interface BTSETHPoolInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getBalance", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getRewards", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getRoleAdmin",
     data: BytesLike
@@ -321,7 +336,11 @@ export interface BTSETHPool extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    TEAM_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     addTeamMember(
       account: string,
@@ -341,6 +360,11 @@ export interface BTSETHPool extends BaseContract {
     ): Promise<ContractTransaction>;
 
     getBalance(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    getRewards(
+      addr: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { returnData: BigNumber }>;
 
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
@@ -404,7 +428,11 @@ export interface BTSETHPool extends BaseContract {
     >;
   };
 
+  ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  TEAM_ROLE(overrides?: CallOverrides): Promise<string>;
 
   addTeamMember(
     account: string,
@@ -424,6 +452,8 @@ export interface BTSETHPool extends BaseContract {
   ): Promise<ContractTransaction>;
 
   getBalance(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getRewards(addr: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
@@ -483,7 +513,11 @@ export interface BTSETHPool extends BaseContract {
   >;
 
   callStatic: {
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    TEAM_ROLE(overrides?: CallOverrides): Promise<string>;
 
     addTeamMember(account: string, overrides?: CallOverrides): Promise<void>;
 
@@ -494,6 +528,8 @@ export interface BTSETHPool extends BaseContract {
     depositRewards(overrides?: CallOverrides): Promise<void>;
 
     getBalance(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getRewards(addr: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
@@ -610,7 +646,11 @@ export interface BTSETHPool extends BaseContract {
   };
 
   estimateGas: {
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    TEAM_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     addTeamMember(
       account: string,
@@ -630,6 +670,8 @@ export interface BTSETHPool extends BaseContract {
     ): Promise<BigNumber>;
 
     getBalance(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getRewards(addr: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     getRoleAdmin(
       role: BytesLike,
@@ -685,9 +727,13 @@ export interface BTSETHPool extends BaseContract {
   };
 
   populateTransaction: {
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     DEFAULT_ADMIN_ROLE(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    TEAM_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     addTeamMember(
       account: string,
@@ -707,6 +753,11 @@ export interface BTSETHPool extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getBalance(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getRewards(
+      addr: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     getRoleAdmin(
       role: BytesLike,

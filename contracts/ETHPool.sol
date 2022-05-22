@@ -3,9 +3,14 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "hardhat/console.sol";
 
 contract BTSETHPool is AccessControl {
   using SafeMath for uint256;
+
+  // Create a new role identifier for the minter role
+  bytes32 public constant TEAM_ROLE = keccak256("TEAM_ROLE");
+  bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
 
   uint256 poolBalance;
   bool isPoolStarted;
@@ -22,16 +27,16 @@ contract BTSETHPool is AccessControl {
   event Receive(uint value);
 
   constructor() {
-    _setupRole("ADMIN_ROLE", msg.sender);
-    _setupRole("TEAM_ROLE", msg.sender);
+    _setupRole(ADMIN_ROLE, msg.sender);
+    _setupRole(TEAM_ROLE, msg.sender);
   }
 
   function addTeamMember(address account) public {
-    grantRole("TEAM_ROLE", account);
+    _grantRole(TEAM_ROLE, account);
   }
 
   function removeTeamMember(address account) public {
-    revokeRole("TEAM_ROLE", account);
+    _revokeRole(TEAM_ROLE, account);
   }
 
   event Deposit(address indexed _address, uint256 _value);
@@ -39,6 +44,7 @@ contract BTSETHPool is AccessControl {
   event Claim(address indexed _address, uint256 _value);
 
   // User deposit
+  /// @notice `msg.sender` deposits `msg.value`
   function deposit() external payable {
     uint256 _amount = msg.value;
 
@@ -50,6 +56,7 @@ contract BTSETHPool is AccessControl {
     if (!isPoolStarted) {
       // Start a new pool
       poolBalance = 0;
+      isPoolStarted = true;
 
       for (uint i=0; i<userAddrs.length; i++) {
         UserInfo storage __userInfo = userInfo[userAddrs[i]];
@@ -72,7 +79,8 @@ contract BTSETHPool is AccessControl {
   }
 
   // Only Team deposit the rewards
-  function depositRewards() public payable onlyRole("TEAM_ROLE") {
+  /// @notice `msg.sender` deposits rewards `msg.value`
+  function depositRewards() public payable onlyRole(TEAM_ROLE) {
     uint256 _amount = msg.value;
     require(
       _amount > 0,
@@ -90,13 +98,14 @@ contract BTSETHPool is AccessControl {
 
     for (uint i=0; i<userAddrs.length; i++) {
       UserInfo storage _userInfo = userInfo[userAddrs[i]];
-      _userInfo.pendingRewards = _userInfo.pendingRewards.add(_userInfo.depositedAmount.div(poolBalance).mul(_amount));
+      _userInfo.pendingRewards = _userInfo.pendingRewards.add(_userInfo.depositedAmount.mul(1e12).div(poolBalance).mul(_amount).div(1e12));
     }
 
     emit DepositRewards(msg.sender, msg.value);
   }
 
   // Claim rewards
+  /// @notice Claim by `msg.sender`
   function claimRewards() public {
     UserInfo storage _userInfo = userInfo[msg.sender];
     uint256 _amount = _userInfo.depositedAmount + _userInfo.pendingRewards;
@@ -139,6 +148,14 @@ contract BTSETHPool is AccessControl {
         UserInfo memory _userInfo = userInfo[userAddrs[i]];
         returnData[i] = _userInfo;
     }
+    return returnData;
+  }
+
+  // Get user rewards
+  function getRewards(address addr) public view returns (uint256 returnData) {
+    UserInfo memory _userInfo = userInfo[addr];
+
+    returnData = _userInfo.depositedAmount + _userInfo.pendingRewards;
     return returnData;
   }
 }
