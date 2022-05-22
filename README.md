@@ -1,5 +1,6 @@
 # Test ETHPool Smart Contract Project
 
+This is the basic ETHPool smart contract project.
 ## Install
 ```
 npm i
