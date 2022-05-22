@@ -8,7 +8,6 @@ import "hardhat/console.sol";
 contract BTSETHPool is AccessControl {
   using SafeMath for uint256;
 
-  // Create a new role identifier for the minter role
   bytes32 public constant TEAM_ROLE = keccak256("TEAM_ROLE");
   bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
 
