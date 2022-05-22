@@ -17,7 +17,7 @@ Make sure your account A, B, owner(deployer) has enough rETH.
 npm run deploy-pool
 ```
 
-## ETHPool Deployment
+## ETHPool Interact
 ```
 npm run interact-pool
 ```
